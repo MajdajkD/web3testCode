@@ -1,0 +1,41 @@
+﻿<button class="btn btn-primary btn-lg" @onclick="ConnectWeb3">Connect Web3</button><br />
+
+<span>Current address: @SelectedAccount</span><br />
+<span>Current network: @SelectedNetwork</span>
+
+@inject Web3Providers.Web3Interop web3int
+@code {
+
+  private string? SelectedAccount = null;
+  private string? SelectedNetwork = null;
+
+  protected override Task OnInitializedAsync()
+  {
+    SelectedAccount = web3int.SelectedAccount;
+    web3int.SelectedAccountChangedEvent += SelectedAccountChanged;
+    web3int.NetworkChangedEvent += SelectedNetworkChanged;
+    return base.OnInitializedAsync();
+  }
+
+
+  private async Task ConnectWeb3()
+  {
+    if(!web3int.Available)
+    {
+      await web3int.EnableWeb3Provider();
+    } 
+  }
+
+  private async Task SelectedAccountChanged(string account)
+  {
+    SelectedAccount = account;
+    this.StateHasChanged();
+  }
+
+  private async Task SelectedNetworkChanged(string chain)
+  {
+    SelectedNetwork = chain;
+    this.StateHasChanged();
+  }
+
+}
